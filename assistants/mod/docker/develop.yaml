@@ -49,9 +49,16 @@ run:
 - $curdir~: $(basename `pwd`)
 
 - $container~:
-  - docker_run:
-      args: "-P -d -t -v $pwd:$mountpoint"
+  - docker_cc:
       image: $image
+      volumes: $mountpoint
+
+- docker_start:
+    container: $container
+    publish_all_ports: True
+    binds:
+      $pwd:
+        $mountpoint
 
 - $ip~:
   - docker_container_ip: $container
