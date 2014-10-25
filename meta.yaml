@@ -1,0 +1,10 @@
+package_name: docker
+version: 0.10.0dev
+license: GPLv2+
+authors: [Bohuslav Kabrda <bkabrda@redhat.com>]
+homepage: https://github.com/devassistant/dap-docker
+summary: Docker assistant
+bugreports: https://github.com/devassistant/dap-docker/issues
+dependencies: [common_args]
+description: |
+    Runs a Docker container for your project, mounting your source code in.
