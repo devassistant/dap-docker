@@ -1,5 +1,7 @@
 fullname: Run a Development Container
-description: Runs a Docker container for your project, mounting your source code in. Let this run while you're developing.
+description: |
+  Creates Docker image and runs a container for your project, mounting your source code in.
+  Let this run while you're developing.
 
 args:
   reuse_image:
@@ -17,6 +19,8 @@ dependencies:
 pre_run:
 - if $path:
   - cl: cd $path
+- if $(ls .devassistant):
+  - dda_r: .
 
 run:
 - $pwd~: $(pwd)
@@ -36,7 +40,8 @@ run:
     - $image~: $(echo $image | cut -c -12)
 - else:
   - $success, $image~:
-    - docker_build: .
+    - docker_build:
+        path: .
   - if not $success:
     - log_e: Failed to build Docker image, exiting ...
 
@@ -46,7 +51,6 @@ run:
   - $mountpoint~: $(cat Dockerfile | grep "^ADD" -m 1 | awk '{ print $3 }')
   - if not $mountpoint:
     - log_e: Can't find a place where to mount source code, please rerun with -m parameter.
-- $curdir~: $(basename `pwd`)
 
 - $container~:
   - docker_cc:
@@ -70,7 +74,10 @@ run:
 
 - log_i: 'New container: hash "$container_short", name "$container_name"'
 - log_i: Your source code is mounted in container directory "$mountpoint"
-- log_i: 'IP address of the container: "$ip"'
+- if defined $docker_port_exposed:  # might have been read from .devassistant
+  - log_i: 'Your project is ready at http://$ip:$docker_port_exposed'
+- else:
+  - log_i: 'IP address of the container: "$ip"'
 
 # TODO: use a docker_a command, that will be able to react to users interrupt signal
 # but not shut down DA
