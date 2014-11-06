@@ -72,6 +72,11 @@ run:
 
 - $container_short~: $(echo $container | cut -c -12)
 
+- atexit:
+  - log_i: Shutting down container $container_short ...
+  - docker_stop:
+      container: $container
+
 - log_i: 'New container: hash "$container_short", name "$container_name"'
 - log_i: Your source code is mounted in container directory "$mountpoint"
 - if defined $docker_port_exposed:  # might have been read from .devassistant
