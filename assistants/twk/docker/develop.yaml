@@ -84,7 +84,11 @@ run:
 - else:
   - log_i: 'IP address of the container: "$ip"'
 
-# TODO: use a docker_a command, that will be able to react to users interrupt signal
-# but not shut down DA
 - log_i: Attaching to container output ...
+- if $(["$__ui__" == "cli"]):
+  - log_i: Hit Ctrl+C at any time to shut down DevAssistant and stop this container.
+- else:
+  - log_i: For now, there is unfortunately no way of interrupting this in GUI
+  - log_i: other than shutting the whole GUI down.
+
 - docker_attach: $container
